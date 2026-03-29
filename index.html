@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNREPORTED — 報道されないニュース</title>
+<meta name="description" content="日本の主要メディアが報道しない国際ニュースを日英バイリンガルで。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;400;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --paper: #f5f0e8;
+    --ink: #1a1a1a;
+    --red: #c0392b;
+    --gold: #b8962e;
+    --muted: #888;
+    --border: #2a2a2a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--paper); font-family: 'Noto Serif JP','Noto Serif',serif; min-height: 100vh; overflow-x: hidden; }
+
+  /* TICKER */
+  .ticker { background: var(--red); padding: 6px 0; overflow: hidden; white-space: nowrap; }
+  .ticker-inner { display: inline-block; animation: scroll 40s linear infinite; font-family: 'IBM Plex Mono',monospace; font-size: 11px; letter-spacing: 0.08em; color: #fff; }
+  @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* HEADER */
+  header { border-bottom: 1px solid var(--border); padding: 0 40px; position: sticky; top: 0; background: var(--bg); z-index: 100; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-family: 'Bebas Neue',sans-serif; font-size: 28px; letter-spacing: 0.15em; color: var(--paper); }
+  .logo span { color: var(--red); }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .header-meta { font-family: 'IBM Plex Mono',monospace; font-size: 11px; color: var(--muted); text-align: right; line-height: 1.6; }
+  .lang-toggle { display: flex; }
+  .lang-btn { padding: 4px 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'IBM Plex Mono',monospace; font-size: 11px; }
+  .lang-btn.active { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  .lang-btn:first-child { border-radius: 3px 0 0 3px; }
+  .lang-btn:last-child  { border-radius: 0 3px 3px 0; }
+
+  /* MASTHEAD */
+  .masthead { padding: 60px 40px 40px; border-bottom: 3px solid var(--paper); position: relative; overflow: hidden; }
+  .masthead::before { content: 'UNREPORTED'; position: absolute; font-family: 'Bebas Neue',sans-serif; font-size: 200px; color: rgba(255,255,255,0.03); top: -20px; right: -20px; line-height: 1; pointer-events: none; }
+  .masthead-date { font-family: 'IBM Plex Mono',monospace; font-size: 11px; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 16px; }
+  .masthead h1 { font-family: 'Bebas Neue',sans-serif; font-size: clamp(42px,6vw,80px); line-height: 0.95; letter-spacing: 0.02em; color: var(--paper); max-width: 800px; }
+  .masthead h1 .en { display: block; font-size: 0.55em; color: var(--muted); letter-spacing: 0.1em; margin-top: 8px; }
+  .masthead-sub { margin-top: 20px; font-size: 13px; color: var(--muted); max-width: 500px; line-height: 1.7; font-weight: 300; }
+
+  /* LAYOUT */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+  .category-bar { padding: 20px 0; border-bottom: 1px solid var(--border); display: flex; gap: 24px; overflow-x: auto; font-family: 'IBM Plex Mono',monospace; font-size: 11px; letter-spacing: 0.12em; }
+  .cat-tag { color: var(--muted); cursor: pointer; white-space: nowrap; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: all 0.2s; }
+  .cat-tag.active, .cat-tag:hover { color: var(--paper); border-bottom-color: var(--red); }
+  .articles-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 0; }
+  .main-column { border-right: 1px solid var(--border); padding-right: 40px; padding-top: 40px; }
+  .side-column { padding-left: 32px; padding-top: 40px; }
+
+  /* ARTICLES */
+  .article-featured { padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--border); animation: fadeIn 0.5s ease both; }
+  .side-article { padding: 20px 0; border-bottom: 1px solid var(--border); animation: fadeIn 0.5s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .article-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .tag { font-family: 'IBM Plex Mono',monospace; font-size: 10px; letter-spacing: 0.15em; padding: 3px 8px; border: 1px solid; text-transform: uppercase; }
+  .tag-nuclear   { border-color: #e67e22; color: #e67e22; }
+  .tag-cyber     { border-color: #3498db; color: #3498db; }
+  .tag-energy    { border-color: var(--gold); color: var(--gold); }
+  .tag-military  { border-color: var(--red); color: var(--red); }
+  .tag-diplomacy { border-color: #9b59b6; color: #9b59b6; }
+  .tag-politics  { border-color: #2ecc71; color: #2ecc71; }
+
+  .article-date { font-family: 'IBM Plex Mono',monospace; font-size: 10px; color: var(--muted); }
+  .article-source { font-family: 'IBM Plex Mono',monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 14px; }
+  .article-source span { color: var(--gold); }
+
+  .article-featured h2 { font-size: 24px; line-height: 1.25; font-weight: 700; margin-bottom: 6px; color: var(--paper); }
+  .article-featured .en-title { font-family: 'Noto Serif',serif; font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 14px; line-height: 1.4; }
+  .article-featured .body { font-size: 14px; line-height: 1.9; color: #ccc; font-weight: 300; }
+
+  .side-article h3 { font-size: 15px; line-height: 1.3; margin: 8px 0 5px; color: var(--paper); }
+  .side-article .en-title { font-family: 'Noto Serif',serif; font-size: 11px; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+  .side-article .body { font-size: 12px; color: #999; line-height: 1.7; font-weight: 300; }
+
+  .read-more { display: inline-block; margin-top: 12px; font-family: 'IBM Plex Mono',monospace; font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+  .read-more:hover { border-bottom-color: var(--gold); }
+
+  /* ABOUT */
+  .about-bar { margin-top: 60px; padding: 40px; border: 1px solid var(--border); background: #141414; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .about-bar h4 { font-family: 'Bebas Neue',sans-serif; font-size: 20px; letter-spacing: 0.1em; margin-bottom: 10px; color: var(--paper); }
+  .about-bar p { font-size: 12px; color: var(--muted); line-height: 1.8; font-weight: 300; }
+
+  /* FOOTER */
+  footer { margin-top: 60px; padding: 30px 40px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono',monospace; font-size: 10px; color: var(--muted); }
+  .footer-logo { font-family: 'Bebas Neue',sans-serif; font-size: 18px; letter-spacing: 0.1em; }
+  .footer-logo span { color: var(--red); }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 768px) {
+    header { padding: 0 20px; }
+    .masthead, .container { padding-left: 20px; padding-right: 20px; }
+    .articles-grid { grid-template-columns: 1fr; }
+    .main-column { border-right: none; padding-right: 0; }
+    .side-column { padding-left: 0; border-top: 1px solid var(--border); }
+    .about-bar { grid-template-columns: 1fr; padding: 24px; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker"><div class="ticker-inner" id="tickerText"></div></div>
+
+<header>
+  <div class="logo">UNREPORTED<span>.</span></div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('ja')">JP</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="header-meta" id="headerDate"></div>
+  </div>
+</header>
+
+<div class="masthead">
+  <div class="masthead-date" id="mastheadDate"></div>
+  <h1>報道されないニュース<span class="en">News Japan Doesn't Report</span></h1>
+  <p class="masthead-sub ja-only">中東・サイバー・地政学——日本の主要メディアが素通りする国際ニュースを、一次情報から日英で要約・解説します。</p>
+  <p class="masthead-sub en-only hidden">Geopolitics, cyber threats, and Middle East developments — summarized from primary sources, in Japanese and English.</p>
+</div>
+
+<div class="container">
+  <div class="category-bar" id="categoryBar"></div>
+  <div class="articles-grid">
+    <div class="main-column" id="mainColumn"></div>
+    <div class="side-column" id="sideColumn"></div>
+  </div>
+  <div class="about-bar">
+    <div>
+      <h4>このサイトについて / About</h4>
+      <p class="ja-only">日本の主要メディアが報道しない国際ニュースを、一次情報源から直接収集・要約・解説するキュレーションメディアです。中東情勢、核問題、サイバー安全保障、エネルギー地政学を中心に、日英バイリンガルで毎日更新します。</p>
+      <p class="en-only hidden">A bilingual curation outlet that sources, summarizes, and contextualizes international news overlooked by mainstream Japanese media. Updated daily with focus on the Middle East, nuclear developments, cyber security, and energy geopolitics.</p>
+    </div>
+    <div>
+      <h4>情報源について / Sources</h4>
+      <p>Tasnim News Agency, Bloomberg, Dark Reading, Global Times, Al Jazeera English, The New Humanitarian, Reuters, AP — 一次情報源を明記し、要約はすべて編集者の判断で作成しています。 / All summaries cite primary sources and reflect editorial judgment.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">UNREPORTED<span>.</span></div>
+  <div class="ja-only">© 2026 — Osaka, Japan — 日英バイリンガル国際ニュース</div>
+  <div class="en-only hidden">© 2026 — Osaka, Japan — Bilingual International News</div>
+  <div>Updated daily / 毎日更新</div>
+</footer>
+
+<script>
+// ============================================================
+//  ★★★ 記事を追加するにはここだけ編集する ★★★
+//  新しい記事を articles 配列の先頭に追加してください
+//  featured: true → 左のメイン欄（大きく表示）
+//  featured: false → 右のサイドバー（小さく表示）
+// ============================================================
+const articles = [
+  {
+    date: "2026.03.29",
+    category: "military",
+    categoryLabel: "MILITARY 軍事",
+    featured: true,
+    titleJa: "IRGC声明：中東の米大学を「正当な攻撃目標」と宣言——期限は3月30日正午",
+    titleEn: "IRGC: US Universities in Region Are 'Legitimate Targets' — Deadline Monday Noon",
+    source: "Tasnim News Agency (Tehran)",
+    sourceUrl: "https://www.tasnimnews.com/",
+    summaryJa: "イラン革命防衛隊（IRGC）は「真の約束作戦・第4弾」声明No.50として、テヘラン科学技術大学への爆撃への報復に、中東地域の米・イスラエルの大学2校を攻撃すると宣言。3月30日（月）正午（テヘラン時間）までに米政府が大学爆撃を公式に非難する声明を出さなければ実行するとし、周辺住民に大学から1km以上の退避を勧告。クルアーンの報復条項を引用しており、宗教的正当性を前面に出した典型的な声明スタイル。攻撃が民間施設を対象とする点で国際人道法上も問題をはらむ。",
+    summaryEn: "The IRGC issued Statement No. 50 of Operation True Promise 4, declaring US and Israeli universities in the West Asia region as legitimate retaliatory targets following the bombing of Tehran University of Science and Technology. The ultimatum gives the US until noon Tehran time on Monday, March 30, to officially condemn the university strikes. Residents, staff, and students are warned to evacuate at least one kilometer from affected campuses. Opening with a Quranic verse on reciprocal aggression, the declaration follows Iran's established pattern of religiously-framed deterrence. Targeting civilian educational facilities raises serious questions under international humanitarian law."
+  },
+  {
+    date: "2026.03.28",
+    category: "nuclear",
+    categoryLabel: "NUCLEAR 核",
+    featured: true,
+    titleJa: "イラン、NPT脱退を本格検討——国際核不拡散体制に亀裂",
+    titleEn: "Iran Begins Considering Withdrawal from NPT",
+    source: "Tasnim News Agency (Tehran)",
+    sourceUrl: "https://www.tasnimnews.com/",
+    summaryJa: "イランが核不拡散条約（NPT）からの脱退を本格的に検討し始めた。議会をはじめとする関係機関が緊急審議を進めており、「NPTに留まる正当性はない」という認識が国内で急速に固まりつつある。IAEA事務局長グロッシが暗黙的に攻撃を容認し、米・イスラエル軍が施設を爆撃してもIAEAが沈黙している現状を条約違反と主張。「脱退は核兵器開発ではなく、IAEAを隠れ蓑にしたスパイ活動の遮断が目的」としている。北朝鮮が2003年に脱退後、核実験を繰り返した前例があり、国際核不拡散体制への深刻な打撃となりうる。",
+    summaryEn: "Iran has placed NPT withdrawal on its official agenda, with parliament and relevant bodies conducting urgent reviews. The consensus is hardening that no justification remains for staying in the treaty. Iran argues that IAEA Director General Grossi has implicitly encouraged attacks on Iranian facilities, while the agency remained silent as US-Israeli forces bombed Iranian nuclear sites. Tehran frames withdrawal not as a move toward nuclear weapons, but as a means to stop espionage conducted under the cover of IAEA inspectors. The precedent of North Korea — which withdrew in 2003 and subsequently conducted multiple nuclear tests — makes this a potentially serious blow to global non-proliferation architecture."
+  },
+  {
+    date: "2026.03.28",
+    category: "energy",
+    categoryLabel: "ENERGY エネルギー",
+    featured: true,
+    titleJa: "サウジの東西パイプライン、日量700万バレルでフル稼働——ホルムズ閉鎖への最後の防壁",
+    titleEn: "Saudi Pipeline to Bypass Hormuz Hits 7 Million Barrel Capacity",
+    source: "Bloomberg / Yahoo Finance",
+    sourceUrl: "https://finance.yahoo.com/news/saudi-pipeline-bypass-hormuz-hits-141020239.html",
+    summaryJa: "サウジアラビアの東西パイプラインが最大容量・日量700万バレルでフル稼働に達した。ヤンブー港からの原油輸出は日量500万バレル、精製品が最大90万バレルに達し、攻撃開始から数時間で代替輸送体制を発動。ただしホルムズ海峡では戦争前に日量1,500万バレルが輸送されており、代替ルートでの補填は半分以下。フーシ派の参戦宣言により紅海が次の戦場となる可能性があり、日本の石油輸入（中東依存約9割）への直接的リスクとなっている。",
+    summaryEn: "Saudi Arabia's East-West pipeline has reached its maximum capacity of 7 million barrels per day, with crude exports from the Red Sea port of Yanbu at approximately 5 million barrels daily. The kingdom activated its contingency plan within hours of the first US-Israeli strikes on Iran. However, before the war, around 15 million barrels per day transited the Strait of Hormuz — the pipeline only covers less than half that volume. With Yemen's Houthis now entering the conflict, the Red Sea itself may become the next front, posing a direct energy security risk for Japan, which sources roughly 90% of its oil from the Middle East."
+  },
+  {
+    date: "2026.03.28",
+    category: "cyber",
+    categoryLabel: "CYBER サイバー",
+    featured: false,
+    titleJa: "イランのハクティビスト、実害は限定的——ただし医療機器8万台リモート消去も",
+    titleEn: "Iran Hacktivists: Loud Claims, Limited Impact — But 80,000 Devices Wiped",
+    source: "Dark Reading",
+    sourceUrl: "https://www.darkreading.com/threat-intelligence/iran-hacktivists-impact-on-war",
+    summaryJa: "攻撃宣言は多いが独立した検証で被害は軽微なケースが多い。一方Handalaは米医療機器大手ストライカーの8万台のデバイスをリモートワイプ。IPカメラをミサイル目標選定に活用するハイブリッド戦争ドクトリンも確認されている。",
+    summaryEn: "Hacktivist groups claim widespread attacks but independent verification shows limited impact in most cases. However, Handala successfully wiped 80,000 Stryker medical devices remotely via Microsoft Intune. Iran's use of hacked IP cameras for missile targeting confirms a converged cyber-kinetic war doctrine."
+  },
+  {
+    date: "2026.03.28",
+    category: "cyber",
+    categoryLabel: "CYBER サイバー",
+    featured: false,
+    titleJa: "中国系APTがアジア重要インフラに長期潜伏——航空・通信・政府機関が標的",
+    titleEn: "Chinese Cyber Threat Targets Critical Asian Sectors Since 2020",
+    source: "Dark Reading / Unit 42",
+    sourceUrl: "https://www.darkreading.com/threat-intelligence/chinese-cyber-threat-critical-asian-sectors",
+    summaryJa: "「CL-UNK-1068」と追跡される中国語話者の脅威アクターが2020年からアジア全域の航空・エネルギー・政府機関などを標的に。LOTLバイナリと正規ツールを組み合わせた検出回避が特徴。Salt Typhoonとの類似性も指摘される。",
+    summaryEn: "Unit 42 tracks 'CL-UNK-1068,' a Chinese-speaking threat actor active since 2020 across aviation, energy, government, and telecom sectors in Asia. The group combines custom malware with LOTL binaries to evade detection. Similarities to Salt Typhoon noted but not confirmed."
+  },
+  {
+    date: "2026.03.28",
+    category: "diplomacy",
+    categoryLabel: "DIPLOMACY 外交",
+    featured: false,
+    titleJa: "自衛隊員による中国大使館侵入——日本政府の「遺憾」に中国が強く反発",
+    titleEn: "SDF Officer Breaks Into Chinese Embassy — Japan's 'Regret' Draws Fierce Criticism",
+    source: "Global Times (Beijing)",
+    sourceUrl: "https://www.globaltimes.cn/page/202603/1357738.shtml",
+    summaryJa: "3月24日、陸自員・村田光大がナイフで中国大使館に侵入。高市首相は沈黙を続け、防衛相が「遺憾」と述べるにとどまった。グローバル・タイムズは1964年のライシャワー大使刺傷事件での日本の迅速な謝罪との対比で、二重基準を批判。",
+    summaryEn: "On March 24, SDF soldier Kodai Murata broke into the Chinese Embassy in Tokyo with a knife. PM Takaichi has remained silent; Defense Minister Koizumi issued only a perfunctory 'deeply regrettable' statement. Global Times invoked the 1964 Reischauer stabbing — when PM Ikeda personally apologized to the US — to highlight Japan's alleged double standard."
+  }
+];
+// ============================================================
+//  ★★★ 編集はここまで ★★★
+// ============================================================
+
+
+// --- Render logic (編集不要) ---
+let currentLang = 'ja';
+let currentCat  = 'all';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  document.querySelectorAll('.ja-only').forEach(el => el.classList.toggle('hidden', lang !== 'ja'));
+  document.querySelectorAll('.en-only').forEach(el => el.classList.toggle('hidden', lang !== 'en'));
+  renderArticles();
+}
+
+function filterCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tag').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.cat-tag[data-cat="${cat}"]`).classList.add('active');
+  renderArticles();
+}
+
+function renderArticles() {
+  const filtered = currentCat === 'all' ? articles : articles.filter(a => a.category === currentCat);
+  const featured = filtered.filter(a => a.featured);
+  const side     = filtered.filter(a => !a.featured);
+  const ja = currentLang === 'ja';
+
+  document.getElementById('mainColumn').innerHTML = featured.map((a, i) => `
+    <div class="article-featured" style="animation-delay:${i*0.1}s">
+      <div class="article-meta">
+        <span class="tag tag-${a.category}">${a.categoryLabel}</span>
+        <span class="article-date">${a.date}</span>
+      </div>
+      <h2>${ja ? a.titleJa : a.titleEn}</h2>
+      <div class="en-title">${ja ? a.titleEn : a.titleJa}</div>
+      <div class="article-source">SOURCE: <span>${a.source}</span></div>
+      <div class="body">${ja ? a.summaryJa : a.summaryEn}</div>
+      <a href="${a.sourceUrl}" target="_blank" class="read-more">SOURCE →</a>
+    </div>
+  `).join('');
+
+  document.getElementById('sideColumn').innerHTML = side.map((a, i) => `
+    <div class="side-article" style="animation-delay:${i*0.1}s">
+      <div class="article-meta">
+        <span class="tag tag-${a.category}">${a.categoryLabel}</span>
+        <span class="article-date">${a.date}</span>
+      </div>
+      <h3>${ja ? a.titleJa : a.titleEn}</h3>
+      <div class="en-title">${ja ? a.titleEn : a.titleJa}</div>
+      <div class="article-source">SOURCE: <span>${a.source}</span></div>
+      <div class="body">${ja ? a.summaryJa : a.summaryEn}</div>
+      <a href="${a.sourceUrl}" target="_blank" class="read-more">SOURCE →</a>
+    </div>
+  `).join('');
+}
+
+function buildTicker() {
+  const items = articles.map(a => `▶ ${a.titleJa} / ${a.titleEn}`).join('　　');
+  const doubled = items + '　　　　' + items;
+  document.getElementById('tickerText').textContent = doubled;
+}
+
+function buildCategoryBar() {
+  const cats = [{ key: 'all', label: 'ALL' }, ...[ ...new Set(articles.map(a => a.category)) ]
+    .map(k => ({ key: k, label: articles.find(a => a.category === k).categoryLabel }))];
+  document.getElementById('categoryBar').innerHTML = cats.map(c =>
+    `<span class="cat-tag${c.key === 'all' ? ' active' : ''}" data-cat="${c.key}" onclick="filterCat('${c.key}')">${c.label}</span>`
+  ).join('');
+}
+
+function setDates() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  const dateStr = `${y}.${m}.${d}`;
+  document.getElementById('headerDate').innerHTML = `${dateStr}<br>報道されないニュース`;
+  document.getElementById('mastheadDate').textContent = `VOL.— ${dateStr} — OSAKA, JAPAN`;
+}
+
+// Init
+setDates();
+buildTicker();
+buildCategoryBar();
+renderArticles();
+</script>
+</body>
+</html>
